@@ -6,10 +6,9 @@ import java.lang.annotation.*;
  * @author zhurg
  * @date 2019/3/28 - 下午8:05
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Cache {
-
+public @interface EnableMybatisCache {
 
 }

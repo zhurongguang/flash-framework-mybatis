@@ -7,14 +7,13 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.flash.framework.mybatis.configure.GeneratorConfigure;
+import com.google.common.collect.Maps;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -150,10 +149,9 @@ public class CodeGenerator {
         return new InjectionConfig() {
             @Override
             public void initMap() {
-                Map<String, Object> map = new HashMap<>();
-                this.setMap(map);
+                this.setMap(Maps.newHashMap());
             }
-        }.setFileOutConfigList(Collections.<FileOutConfig>singletonList(new FileOutConfig(
+        }.setFileOutConfigList(Collections.singletonList(new FileOutConfig(
                 "/templates/mapper.xml.vm") {
             // 自定义输出文件目录
             @Override

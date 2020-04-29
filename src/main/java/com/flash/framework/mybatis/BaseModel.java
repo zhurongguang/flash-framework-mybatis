@@ -1,7 +1,6 @@
 package com.flash.framework.mybatis;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
@@ -35,13 +34,13 @@ public abstract class BaseModel implements Serializable {
     /**
      * 创建人
      */
-    @TableField(value = "create_by", insertStrategy = FieldStrategy.IGNORED, updateStrategy = FieldStrategy.IGNORED, whereStrategy = FieldStrategy.IGNORED, fill = FieldFill.INSERT)
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
     private String createBy;
 
     /**
      * 更新人
      */
-    @TableField(value = "update_by", insertStrategy = FieldStrategy.IGNORED, updateStrategy = FieldStrategy.IGNORED, whereStrategy = FieldStrategy.IGNORED, fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
 
     /**

@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2019/2/1 - 上午11:21
  */
 @Data
-@ConfigurationProperties(prefix = "flash.generator")
+@ConfigurationProperties(prefix = "mybatis.generator")
 public class GeneratorConfigure {
 
     /**

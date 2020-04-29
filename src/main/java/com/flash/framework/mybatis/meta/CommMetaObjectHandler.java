@@ -2,6 +2,7 @@ package com.flash.framework.mybatis.meta;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.flash.framework.commons.context.RequestContext;
+import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.ApplicationContext;
@@ -17,17 +18,7 @@ import java.util.Objects;
 @Slf4j
 public class CommMetaObjectHandler implements MetaObjectHandler, ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
-
     private RequestContext requestContext;
-
-    public void init() {
-        try {
-            this.requestContext = applicationContext.getBean(RequestContext.class);
-        } catch (Exception e) {
-            log.warn("[Flash Framework] can not fund RequestContext in Spring Bean");
-        }
-    }
 
     /**
      * 创建时间
@@ -60,16 +51,16 @@ public class CommMetaObjectHandler implements MetaObjectHandler, ApplicationCont
             if (metaObject.hasGetter(UPDATED_AT) && Objects.isNull(metaObject.getValue(UPDATED_AT))) {
                 strictInsertFill(metaObject, UPDATED_AT, Date.class, date);
             }
-            if (null != requestContext) {
+            if (Objects.nonNull(requestContext)) {
                 if (metaObject.hasGetter(CREATE_BY) && Objects.isNull(metaObject.getValue(CREATE_BY))) {
-                    strictInsertFill(metaObject, CREATE_BY, String.class, requestContext.getUserId());
+                    strictInsertFill(metaObject, CREATE_BY, String.class, requestContext.getUserId().toString());
                 }
                 if (metaObject.hasGetter(UPDATE_BY) && Objects.isNull(metaObject.getValue(UPDATE_BY))) {
-                    strictInsertFill(metaObject, UPDATE_BY, String.class, requestContext.getUserId());
+                    strictInsertFill(metaObject, UPDATE_BY, String.class, requestContext.getUserId().toString());
                 }
             }
         } catch (Exception e) {
-            log.error("[Flash Framework] MetaObjectHandler auto insert failed,cause:", e);
+            log.error("[Flash Framework] MetaObjectHandler auto insert failed,cause:{}", Throwables.getStackTraceAsString(e));
         }
     }
 
@@ -79,19 +70,23 @@ public class CommMetaObjectHandler implements MetaObjectHandler, ApplicationCont
             if (metaObject.hasGetter(UPDATED_AT) && Objects.isNull(metaObject.getValue(UPDATED_AT))) {
                 strictUpdateFill(metaObject, UPDATED_AT, Date.class, new Date());
             }
-            if (null != requestContext) {
+            if (Objects.nonNull(requestContext)) {
                 if (metaObject.hasGetter(UPDATE_BY) && Objects.isNull(metaObject.getValue(UPDATE_BY))) {
-                    strictUpdateFill(metaObject, UPDATE_BY, String.class, requestContext.getUserId());
+                    strictUpdateFill(metaObject, UPDATE_BY, String.class, requestContext.getUserId().toString());
                 }
             }
         } catch (Exception e) {
-            log.error("[Flash Framework] MetaObjectHandler auto update failed,cause:", e);
+            log.error("[Flash Framework] MetaObjectHandler auto update failed,cause:{}", Throwables.getStackTraceAsString(e));
         }
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+        try {
+            this.requestContext = applicationContext.getBean(RequestContext.class);
+        } catch (Exception e) {
+            log.warn("[Flash Framework] can not fund RequestContext in Spring Bean");
+        }
     }
 
 }

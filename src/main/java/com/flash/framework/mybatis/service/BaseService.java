@@ -10,5 +10,5 @@ import com.flash.framework.mybatis.BaseModel;
  * @date 2019/1/20 - 下午10:14
  */
 public interface BaseService<T extends BaseModel> extends IService<T> {
-
+    
 }

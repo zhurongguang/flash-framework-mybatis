@@ -3,7 +3,8 @@ package com.flash.framework.mybatis.service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.flash.framework.mybatis.BaseModel;
 import com.flash.framework.mybatis.mapper.AbstractMapper;
-import com.flash.framework.mybatis.support.cache.Cache;
+import com.flash.framework.mybatis.support.cache.CacheOperation;
+import com.flash.framework.mybatis.support.cache.MybatisCache;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -18,31 +19,31 @@ public abstract class BaseServiceImpl<Mapper extends AbstractMapper<T>, T extend
         extends ServiceImpl<Mapper, T> implements BaseService<T> {
 
     @Override
-    @Cache
+    @MybatisCache
     public T getById(Serializable id) {
         return super.getById(id);
     }
 
     @Override
-    @Cache
+    @MybatisCache(operation = CacheOperation.UPDATE_BY_ID)
     public boolean updateById(T entity) {
         return super.updateById(entity);
     }
 
     @Override
-    @Cache
+    @MybatisCache(operation = CacheOperation.BATCH_UPDATE_BY_ID)
     public boolean updateBatchById(Collection<T> entityList) {
         return super.updateBatchById(entityList);
     }
 
     @Override
-    @Cache
+    @MybatisCache(operation = CacheOperation.UPDATE_BY_ID)
     public boolean removeById(Serializable id) {
         return super.removeById(id);
     }
 
     @Override
-    @Cache
+    @MybatisCache(operation = CacheOperation.BATCH_UPDATE_BY_ID)
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         return super.removeByIds(idList);
     }

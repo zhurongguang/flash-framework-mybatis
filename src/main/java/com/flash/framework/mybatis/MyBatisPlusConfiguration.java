@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.flash.framework.mybatis.configure.GeneratorConfigure;
 import com.flash.framework.mybatis.meta.CommMetaObjectHandler;
+import com.flash.framework.mybatis.support.cache.MyBatisCacheConfigure;
 import com.flash.framework.mybatis.support.cache.MybatisCacheInterceptor;
+import com.flash.framework.mybatis.support.cache.MybatisCacheRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureAfter(MybatisPlusProperties.class)
-@EnableConfigurationProperties(GeneratorConfigure.class)
+@EnableConfigurationProperties({GeneratorConfigure.class, MyBatisCacheConfigure.class})
 public class MyBatisPlusConfiguration {
 
     /**
@@ -50,22 +50,39 @@ public class MyBatisPlusConfiguration {
      *
      * @return
      */
-    @Bean(initMethod = "init")
+    @Bean
     @ConditionalOnMissingBean(MetaObjectHandler.class)
     public CommMetaObjectHandler commMetaObjectHandler() {
         return new CommMetaObjectHandler();
     }
 
+    /**
+     * 代码生成器
+     *
+     * @param generatorConfigure
+     * @return
+     */
     @Bean
-    @ConditionalOnProperty(name = "flash.generator.enable", havingValue = "true")
+    @ConditionalOnProperty(name = "mybatis.generator.enable", havingValue = "true")
     public CodeGenerator codeGenerator(GeneratorConfigure generatorConfigure) {
         return new CodeGenerator(generatorConfigure);
     }
 
+    /**
+     * 自定义缓存配置
+     *
+     * @return
+     */
     @Bean
-    @ConditionalOnBean(CacheManager.class)
-    @ConditionalOnProperty(name = "flash.mybatis.cache.enable", havingValue = "true")
-    public MybatisCacheInterceptor mybatisCacheInterceptor(CacheManager cacheManager) {
-        return new MybatisCacheInterceptor(cacheManager);
+    @ConditionalOnProperty(name = "mybatis.cache.enable", havingValue = "true")
+    public MybatisCacheInterceptor mybatisCacheInterceptor() {
+        return new MybatisCacheInterceptor();
     }
+
+    @Bean
+    @ConditionalOnProperty(name = "mybatis.cache.enable", havingValue = "true")
+    public MybatisCacheRegistry mybatisCacheRegistry() {
+        return new MybatisCacheRegistry();
+    }
+
 }
