@@ -2,8 +2,9 @@ package com.flash.framework.mybatis;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.flash.framework.mybatis.configure.GeneratorConfigure;
 import com.flash.framework.mybatis.meta.CommMetaObjectHandler;
 import com.flash.framework.mybatis.support.cache.MyBatisCacheConfigure;
@@ -25,24 +26,14 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({GeneratorConfigure.class, MyBatisCacheConfigure.class})
 public class MyBatisPlusConfiguration {
 
-    /**
-     * 乐观锁插件
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean(OptimisticLockerInterceptor.class)
-    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-        return new OptimisticLockerInterceptor();
-    }
 
-    /**
-     * 分页插件
-     */
     @Bean
-    @ConditionalOnMissingBean(PaginationInterceptor.class)
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
+    @ConditionalOnMissingBean
+    public MybatisPlusInterceptor mybatisPlusInterceptor(GeneratorConfigure generatorConfigure) {
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(generatorConfigure.getDbType()));
+        mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        return mybatisPlusInterceptor;
     }
 
     /**
